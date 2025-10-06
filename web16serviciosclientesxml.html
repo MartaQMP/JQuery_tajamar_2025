@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Servicios clientes XML</h1>
+        <label>Selecione un cliente</label>
+        <select id="selectcliente"></select>
+        <hr />
+        <div id="contenedor"></div>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function () {
+                let url = "https://apiclientesxml.azurewebsites.net/";
+                let request = "api/clientes/getclientesxml";
+                $.get(url + request, function (data) {
+                    console.log("Leyendo...");
+                    $(data)
+                        .find("CLIENTE")
+                        .each(function () {
+                            let id = $(this).attr("IDCLIENTE");
+                            let nombre = $(this).find("NOMBRE").text();
+                            let option = $("<option>");
+                            option.val(id);
+                            option.text(nombre);
+                            $("#selectcliente").append(option);
+                        });
+                });
+                $("#selectcliente").change(function () {
+                    let id = $(this).val();
+                    $.get(url + request, function (data) {
+                        let html = "";
+                        $("#contenedor").empty();
+                        //HAGO EL FILTRO PARA ENCONTRAR EL CLIENTE
+                        let filtro = "CLIENTE[IDCLIENTE=" + id + "]";
+                        let nodo = $(data).find(filtro).first();
+                        //APLICO EL FILTRO PARA COGER LOS DATOS
+                        let direccion = $(nodo).find("DIRECCION").text();
+                        let email = $(nodo).find("EMAIL").text();
+                        let codpos = $(nodo).find("CODIGOPOSTAL").text();
+                        let web = $(nodo).find("PAGINAWEB").text();
+                        let img = $(nodo).find("IMAGENCLIENTE").text();
+                        let dir = "<h4>DIRECCION: " + direccion + "</h4>";
+                        let ema = "<h4>EMAIL: " + email + "</h4>";
+                        let cp = "<h4>CODIGO POSTAL: " + codpos + "</h4>";
+                        let pw = "<h4>PAGINA WEB: " + web + "</h4>";
+                        let image = "<img src ='" + img + "''></img>";
+                        $("#contenedor").append(dir);
+                        $("#contenedor").append(ema);
+                        $("#contenedor").append(cp);
+                        $("#contenedor").append(pw);
+                        $("#contenedor").append(image);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

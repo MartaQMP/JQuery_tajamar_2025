@@ -1,64 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>Filtros XML</h1>
-    <label>Introduzca ID:</label>
-    <input type="text" id="cajaid" />
-    <button id="botonatributo">Buscar atributo ID</button>
-    <h1 id="mensaje"></h1>
-    <hr />
-    <label>Introduzca localidad:</label>
-    <input type="text" id="cajalocalidad" />
-    <button id="botonlocalidad">Buscar localidad</button>
-    <hr />
-    <ul id="listadepartamentos"></ul>
-    <script src="js/jquery-3.7.1.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("#botonatributo").click(function () {
-          $.get("documents/departamentos.xml", function (data) {
-            console.log("Leyendo..");
-            //EL FILTRO SERA EL SIGUIENTE: DEPT[DEPT_NO]
-            let id = $("#cajaid").val();
-            let filtro = "DEPT[DEPT_NO=" + id + "]";
-            //SOLAMENTE TENEMOS UN ID POR DEPARTAMENTO
-            let nododept = $(data).find(filtro).first();
-            let nombre = $(nododept).find("DNOMBRE").text();
-            let localidad = $(nododept).find("LOC").text();
-            $("#mensaje").text(
-              "Departamento: " + nombre + ", localidad: " + localidad
-            );
-          });
-        });
-        $("#botonlocalidad").click(function () {
-          $.get("documents/departamentos.xml", function (data) {
-            console.log("Leyendo...");
-            let localidad = $("#cajalocalidad").val();
-            //EL FILTRO SERA EL SIGUIENTE: LOC:contains(GIJOM)
-            let filtro = "LOC:contains(" + localidad + ")";
-            //SON VARIOS ELEMENTOS QUE PODRIA DEVOLVER (each)
-            let html = "";
-            $(data)
-              .find(filtro)
-              .each(function () {
-                let id = $(this).parent().attr("DEPT_NO");
-                let nombre = $(this).parent().find("DNOMBRE").text();
-                //DEVOLVER ID Y NOMBRE
-                html += "<li> ID:" + id + " Nombre: " + nombre + "</li>";
-              });
-
-            if (html === "") {
-              html = "<li>No hay resultados</li>";
-            }
-            $("#listadepartamentos").html(html);
-          });
-        });
-      });
-    </script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Filtros XML</h1>
+        <label>Introduzca ID:</label>
+        <input type="text" id="cajaid" />
+        <button id="botonatributo">Buscar atributo ID</button>
+        <h1 id="mensaje"></h1>
+        <hr />
+        <label>Introduzca localidad:</label>
+        <input type="text" id="cajalocalidad" />
+        <button id="botonlocalidad">Buscar localidad</button>
+        <hr />
+        <ul id="listadepartamentos"></ul>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#botonatributo").click(function () {
+                    $.get("documents/departamentos.xml", function (data) {
+                        console.log("Leyendo..");
+                        //EL FILTRO SERA EL SIGUIENTE: DEPT[DEPT_NO]
+                        let id = $("#cajaid").val();
+                        let filtro = "DEPT[DEPT_NO=" + id + "]";
+                        //SOLAMENTE TENEMOS UN ID POR DEPARTAMENTO
+                        let nododept = $(data).find(filtro).first();
+                        let nombre = $(nododept).find("DNOMBRE").text();
+                        let localidad = $(nododept).find("LOC").text();
+                        $("#mensaje").text("Departamento: " + nombre + ", localidad: " + localidad);
+                    });
+                });
+                $("#botonlocalidad").click(function () {
+                    $.get("documents/departamentos.xml", function (data) {
+                        console.log("Leyendo...");
+                        let localidad = $("#cajalocalidad").val();
+                        //EL FILTRO SERA EL SIGUIENTE: LOC:contains(GIJOM)
+                        let filtro = "LOC:contains(" + localidad + ")";
+                        //SON VARIOS ELEMENTOS QUE PODRIA DEVOLVER (each)
+                        let html = "";
+                        if ($(data).find(filtro).length === 0) {
+                            html = "<li>No hay resultados</li>";
+                        } else {
+                            $(data)
+                                .find(filtro)
+                                .each(function () {
+                                    let id = $(this).parent().attr("DEPT_NO");
+                                    let nombre = $(this).parent().find("DNOMBRE").text();
+                                    //DEVOLVER ID Y NOMBRE
+                                    html += "<li> ID:" + id + " Nombre: " + nombre + "</li>";
+                                });
+                        }
+                        $("#listadepartamentos").html(html);
+                    });
+                });
+            });
+        </script>
+    </body>
 </html>

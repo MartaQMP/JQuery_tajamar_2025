@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Clientes XML</h1>
+        <div id="contenedorbotones"></div>
+        <div id="contenedorcliente"></div>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function () {
+                let url = "https://apiclientesxml.azurewebsites.net/";
+                let requestCliente = "api/clientes";
+                $.get(url + requestCliente, function (data) {
+                    let html = "";
+                    console.log("Leyendo...");
+                    let cliente = $(data)
+                        .find("Cliente")
+                        .each(function () {
+                            let nombre = $(this).find("Nombre").text();
+                            let id = $(this).find("IdCliente").text();
+                            html = $("<button>");
+                            html.text(nombre);
+                            html.val(id);
+                            $("#contenedorbotones").append(html);
+                        });
+                    $("button").click(function () {
+                        $("#contenedorcliente").empty();
+                        let id = $(this).val();
+                        let requestId = "api/clientes/" + id;
+                        $.get(url + requestId, function (data) {
+                            let html = "";
+                            console.log("Leyendo cliente...");
+                            html += "<h4>Nombre: " + $(data).find("Nombre").text() + "</h4>";
+                            html += "<p>Email: " + $(data).find("Email").text();
+                            +"</p>";
+                            html += "<p>Pagina web: " + $(data).find("PaginaWeb").text() + "</p>";
+                            html += "<img src='" + $(data).find("Imagen").text() + "'></img>";
+                            $("#contenedorcliente").append(html);
+                        });
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
