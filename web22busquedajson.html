@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            img {
+                width: 200px;
+                height: 150px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Jugadores JSON</h1>
+        <label>Seleccione un jugador</label>
+        <select id="selector"></select>
+        <div id="contenedor"></div>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function () {
+                $.getJSON("documents/jugadores.json", function (data) {
+                    let html = "";
+                    $.each(data.jugadores, function (index, jugador) {
+                        let nombre = jugador.nombre;
+                        let option = $("<option>");
+                        option.text(nombre);
+                        option.val(index);
+                        $("#selector").append(option);
+                    });
+                });
+                $("#selector").change(function () {
+                    $("#contenedor").empty();
+                    //let nombre = $("#selector").val()
+                    let index = $("#selector").val();
+                    $.getJSON("documents/jugadores.json", function (data) {
+                        let html = "";
+                        // $.each(data.jugadores, function (index, jugador) {
+                        //     if (jugador.nombre == nombre) {
+                        //         html += "<p>" + jugador.posicion + "</p>";
+                        //         html += "<p>" + jugador.edad + "</p>";
+                        //         html += "<img src='" + jugador.imagen + "'/>";
+                        //     }
+                        // });
+
+                        //AHORA LO MISMO PERO SIN EACH/BUCLES NI IF
+                        let jugador = data.jugadores[index];
+                        html += "<p>" + jugador.posicion + "</p>";
+                        html += "<p>" + jugador.edad + "</p>";
+                        html += "<img src='" + jugador.imagen + "'/>";
+                        $("#contenedor").append(html);
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

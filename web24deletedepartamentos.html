@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Eliminar departamentos JSON</h1>
+        <ul id="listadepartamentos">
+            <li><button>Eliminar</button></li>
+        </ul>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function () {
+                getDepartamentos();
+            });
+            $(document).on("click", "button", function () {
+                console.log("holi");
+                let id = $("button").val();
+                console.log(id);
+                $.ajax({
+                    url: "https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos/"+id,
+                });
+            });
+            function getDepartamentos() {
+                $.get("https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos", function (data) {
+                    let html = "";
+                    $.each(data, function (index, departamento) {
+                        html += "<li>" + departamento.nombre + "</li>";
+                        html += "<button id='botondelete' val='" + departamento.numero + "'>Delete</button>";
+                    });
+                    $("#listadepartamentos").html(html);
+                });
+            }
+        </script>
+    </body>
+</html>

@@ -7,6 +7,16 @@
     </head>
     <body>
         <h1>Crud departamentos XML</h1>
+        <label>Id</label>
+        <input type="text" id="cajaid" /><br />
+        <label>Nombre</label>
+        <input type="text" id="cajanombre" /><br />
+        <label>Localidad</label>
+        <input type="text" id="cajalocalidad" /><br />
+        <button id="botoninsert">Insertar</button>
+        <button id="botondelete">Eliminar</button>
+        <button id="botonupdate">Modificar</button>
+        <hr />
         <table id="tabladepartamentos">
             <thead>
                 <tr>
@@ -22,7 +32,69 @@
             let url = "https://apicruddepartamentosxml.azurewebsites.net/";
             $(document).ready(function () {
                 cargarDepartamentos();
+                $("#botoninsert").click(function () {
+                    console.log("Dentro insert");
+                    let id = $("#cajaid").val();
+                    let nombre = $("#cajanombre").val();
+                    let localidad = $("#cajalocalidad").val();
+                    //NECESITAMOS GENERAR UN STRING CON LA MISMA ESTRUCTURA
+                    //QUE EL DOCUMENTO XML PARA SUS REGISTROS
+                    let dataXML = getDepartamentoXML(id, nombre, localidad);
+                    let request = "api/departamentos";
+                    $.ajax({
+                        url: url + request,
+                        type: "POST",
+                        contentType: "text/xml",
+                        data: dataXML,
+                        success: function () {
+                            console.log("Insertado");
+                            cargarDepartamentos();
+                        },
+                    });
+                });
+                $("#botonupdate").click(function () {
+                    console.log("Dentro update");
+                    let id = $("#cajaid").val();
+                    let nombre = $("#cajanombre").val();
+                    let localidad = $("#cajalocalidad").val();
+                    //NECESITAMOS GENERAR UN STRING CON LA MISMA ESTRUCTURA
+                    //QUE EL DOCUMENTO XML PARA SUS REGISTROS
+                    let dataXML = getDepartamentoXML(id, nombre, localidad);
+                    let request = "api/departamentos";
+                    $.ajax({
+                        url: url + request,
+                        type: "PUT",
+                        contentType: "text/xml",
+                        data: dataXML,
+                        success: function () {
+                            console.log("Modificado");
+                            cargarDepartamentos();
+                        },
+                    });
+                });
+                $("#botondelete").click(function () {
+                    console.log("Dentro eliminar");
+                    let id = $("#cajaid").val();
+                    let request = "api/departamentos/" + id;
+                    $.ajax({
+                        url: url + request,
+                        type: "DELETE",
+                        success: function () {
+                            console.log("Eliminado");
+                            cargarDepartamentos();
+                        },
+                    });
+                });
             });
+            //FUNCIONES
+            function getDepartamentoXML(id, nombre, localidad) {
+                let dataXML = "<Departamento>";
+                dataXML += "<IdDepartamento>" + id + "</IdDepartamento>";
+                dataXML += "<Nombre>" + nombre + "</Nombre>";
+                dataXML += "<Localidad>" + localidad + "</Localidad>";
+                dataXML += "</Departamento>";
+                return dataXML;
+            }
             function cargarDepartamentos() {
                 let request = "api/departamentos";
                 $.get(url + request, function (data) {
