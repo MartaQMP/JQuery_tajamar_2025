@@ -4,35 +4,36 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        
     </head>
     <body>
         <h1>Eliminar departamentos JSON</h1>
-        <ul id="listadepartamentos">
-        </ul>
+        <ul id="listadepartamentos"></ul>
         <script src="js/jquery-3.7.1.js"></script>
         <script>
             $(document).ready(function () {
                 getDepartamentos();
             });
             $(document).on("click", "button", function () {
-                let id = $(this).attr("data-id");
+                let id = $(this).val();
                 console.log(id);
                 $.ajax({
                     url: "https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos/delete/" + id,
                     type: "DELETE",
                     success: function () {
-                        console.log("Eliminado")
+                        console.log("Eliminado");
                         getDepartamentos();
                     },
                 });
             });
             function getDepartamentos() {
-                $.get("https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos", function (data) {
+                $.getJSON("https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos", function (data) {
                     let html = "";
                     $.each(data, function (index, departamento) {
-                        html += "<li>" + departamento.nombre + "<button data-id='" + departamento.numero + "'>Eliminar</button></li>";
+                        html += "<li>" + departamento.nombre + "<button value='" + departamento.numero + "'>Eliminar</button></li>";
                     });
                     $("#listadepartamentos").html(html);
+                    //PUEDO PONER AQUI LA FUNCIONALIDAD DEL BOTON.CLICK
                 });
             }
         </script>

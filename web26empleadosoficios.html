@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            table {
+                border: 2px solid black;
+                border-collapse: collapse;
+            }
+            th,
+            td {
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Empleados oficio</h1>
+        <select id="selector"></select>
+        <hr />
+        <label>Incremento salarial:</label>
+        <input type="text" id="salario" />
+        <button id="botonincremento">Incrementar</button><br />
+        <hr/>
+        <table id="tablaempleados">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Oficio</th>
+                    <th>Salario</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            let url = "https://apiempleadosaction.azurewebsites.net/";
+            let requestOficio = "/api/Empleados/GetOficios/oficios";
+            let requestIncremento = "/api/Empleados/IncrementarSalarioOficios/";
+            let requestempleados = "/api/Empleados/GetEmpleadosOficio/empleadosoficio/";
+            $(document).ready(function () {
+                getOficios();
+                //SI CAMBIO EL SELECTOR CAMBIO LOS EMPLEADOS
+                $("#selector").change(function () {
+                    let oficio = $(this).val();
+                    getEmpleados(oficio);
+                });
+                //SI PULSO EL BOTON AUMENTO EL SALARIO
+                $("#botonincremento").click(function () {
+                    let incremento = parseInt($("#salario").val());
+                    let oficio = $("#selector").val();
+                    $.ajax({
+                        url: url + requestIncremento + oficio + "/" + incremento,
+                        type: "PUT",
+                        success: function () {
+                            console.log("Salario modificado");
+                            getEmpleados(oficio);
+                        },
+                    });
+                });
+            });
+            function getOficios() {
+                $.getJSON(url + requestOficio, function (data) {
+                    $.each(data, function (index, oficio) {
+                        let option = $("<option>");
+                        option.text(oficio);
+                        $("#selector").append(option);
+                    });
+                    getEmpleados(data[0])
+                });
+            }
+            function getEmpleados(oficio) {
+                $.getJSON(url + requestempleados + oficio, function (data) {
+                    let html = "";
+                    $.each(data, function (index, emp) {
+                        html += "<tr>";
+                        html += "<td>" + emp.apellido + "</td>";
+                        html += "<td>" + emp.oficio + "</td>";
+                        html += "<td>" + emp.salario + "</td>";
+                        html += "</tr>";
+                    });
+                    $("#tablaempleados tbody").html(html);
+                });
+            }
+        </script>
+    </body>
+</html>
