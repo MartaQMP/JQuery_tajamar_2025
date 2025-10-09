@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="auto">
+<html lang="en" class="h-100" data-bs-theme="auto">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="" />
         <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
         <meta name="generator" content="Astro v5.13.2" />
-        <title>Fixed top navbar example · Bootstrap v5.3</title>
-        <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/navbar-fixed/" />
+        <title>Cover Template · Bootstrap v5.3</title>
+        <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/" />
         <script src="js/color-modes.js"></script>
         <link href="css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" />
-        <meta name="theme-color" content="#712cf9" />
-        <link href="css/navbar-fixed.css" rel="stylesheet" />
+        <link href="css/cover.css" rel="stylesheet" />
         <style>
             .bd-placeholder-img {
                 font-size: 1.125rem;
@@ -85,7 +84,7 @@
             }
         </style>
     </head>
-    <body>
+    <body class="d-flex h-100 text-center text-bg-dark">
         <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
             <symbol id="check2" viewBox="0 0 16 16">
                 <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
@@ -140,84 +139,91 @@
                 </li>
             </ul>
         </div>
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">CRUD Hospitales</a>
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarCollapse"
-                    aria-controls="navbarCollapse"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="web28homehospitales.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="web28createhospital.html">Insert</a></li>
-                        <li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Disabled</a></li>
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" /> <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+            <header class="mb-auto">
+                <div>
+                    <h3 class="float-md-start mb-0">Doctores</h3>
+                    <nav class="nav nav-masthead justify-content-center float-md-end">
+                        <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="pfweb29homedoctores.html">Home</a>
+                        <a class="nav-link fw-bold py-1 px-0" href="pfweb29createdoctores.html">Create Doctor</a>
+                    </nav>
                 </div>
-            </div>
-        </nav>
-        <main class="container">
-            <div class="bg-body-tertiary p-5 rounded">
-                <h1>Home</h1>
-                <table id="tablahospitales" class="table table-bordered">
+            </header>
+            <main class="px-3">
+                <h1>Doctores</h1>
+                <table id="tabladoctores" class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Direccion</th>
+                            <th>Apellido</th>
+                            <th>Id Hospital</th>
+                            <th>Especialidad</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
-            </div>
-        </main>
-        <script src="js/bootstrap.bundle.js"></script>
+            </main>
+            <footer class="mt-auto text-white-50">
+                <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://x.com/mdo" class="text-white">@mdo</a>.</p>
+            </footer>
+        </div>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="js/jquery-3.7.1.js"></script>
         <script>
-            let url = "https://apicrudhospital.azurewebsites.net/";
+            let url = "https://apicruddoctores.azurewebsites.net/";
             $(document).ready(function () {
-                getHospitales();
+                getDoctores();
             });
             $(document).on("click", ".btn-danger", function () {
-                let id = $(this).val();
-                let request = "webresources/hospitales/delete/" + id;
+                Swal.fire({
+                    title: "Estas seguro?",
+                    text: "No podras revertirlo",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, eliminalo!",
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Eliminado!",
+                            text: "El doctor ha sido eliminado",
+                            icon: "success",
+                        });
+                        let id = $(this).val();
+                        deleteDoctor(id);
+                    }
+                });
+            });
+            function getDoctores() {
+                let request = "api/doctores";
+                $.getJSON(url + request, function (data) {
+                    let html = "";
+                    $.each(data, function (index, doctor) {
+                        html += "<tr>";
+                        html += "<td>" + doctor.apellido + "</td>";
+                        html += "<td>" + doctor.idHospital + "</td>";
+                        html += "<td>" + doctor.especialidad + "</td>";
+                        html += "<td><a href='pfweb29detailsdoctor.html?iddoctor=" + doctor.idDoctor + "' class='btn btn-light'>Detalles</a></td>";
+                        html += "<td><button class='btn btn-danger' value=" + doctor.idDoctor + ">Eliminar</button></td>";
+                        html += "<td><a class='btn btn-dark' href='pfweb29editdoctores.html?iddoctor=" + doctor.idDoctor + "'>Editar</a></td>";
+                        html += "</tr>";
+                    });
+                    $("#tabladoctores tbody").html(html);
+                });
+            }
+            function deleteDoctor(id) {
+                let request = "api/doctores/" + id;
                 $.ajax({
                     url: url + request,
                     type: "DELETE",
                     success: function () {
                         console.log("Eliminado");
-                        getHospitales();
+                        getDoctores();
                     },
-                });
-            });
-            function getHospitales() {
-                let request = "webresources/hospitales";
-                $.getJSON(url + request, function (data) {
-                    console.log("Leyendo...");
-                    let html = "";
-                    $.each(data, function (index, hospital) {
-                        html += "<tr>";
-                        html += "<td>" + hospital.nombre + "</td>";
-                        html += "<td>" + hospital.direccion + "</td>";
-                        html += "<td>";
-                        html += "<a class='btn btn-primary' href='web28detailshospital.html?idhospital=" + hospital.idhospital + "'>Details</a>";
-                        html += "<a class='btn btn-info' href='web28edithospital.html?idhospital=" + hospital.idhospital + "'>Edit</a>";
-                        html += "<button class='btn btn-danger' value=" + hospital.idhospital + ">Delete</button>";
-                        html += "</td>";
-                        html += "</td>";
-                        html += "</tr>";
-                    });
-                    $("#tablahospitales tbody").html(html);
                 });
             }
         </script>
