@@ -151,7 +151,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="home.html">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="apuestas.html">Apuestas</a></li>
                         <li class="nav-item dropdown">
                             <p class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">Equipos</p>
@@ -163,7 +163,16 @@
         </nav>
         <main class="container">
             <div class="bg-body-tertiary p-5 rounded">
-                <img src="../images/home.webp" style="width: 100%" />
+                <label class="form-label">Usuario</label>
+                <input class="form-control" type="text" id="cajausuario" />
+                <label class="form-label">Local</label>
+                <input class="form-control" type="text" id="cajalocal" />
+                <label class="form-label">Visitante</label>
+                <input class="form-control" type="text" id="cajavisitante" />
+                <label class="form-label">Fecha</label>
+                <input class="form-control" type="text" id="cajafecha" />
+                <br />
+                <button class="btn btn-success" id="botoninsertar" style="margin: auto; display: block">Realizar apuesta</button>
             </div>
         </main>
         <script src="../js/bootstrap.bundle.js"></script>
@@ -172,16 +181,54 @@
             let url = "https://apiapuestas.azurewebsites.net/";
             $(document).ready(function () {
                 getEquipos();
+                $("#botoninsertar").click(function () {
+                    console.log("Dentro de boton");
+                    let request = "api/apuestas";
+                    let usuario = $("#cajausuario").val();
+                    let resultado = $("#cajalocal").val() + " - " + $("#cajavisitante").val();
+                    let fecha = $("#cajafecha").val();
+                    let apuesta = new Object();
+                    apuesta.idApuesta = 0;
+                    apuesta.usuario = usuario;
+                    apuesta.resultado = resultado;
+                    apuesta.fecha = fecha;
+                    let dataJSON = JSON.stringify(apuesta);
+                    $.ajax({
+                        url: url + request,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: dataJSON,
+                        success: function () {
+                            console.log("Insertado");
+                            window.location.href = "apuestas.html";
+                        },
+                    });
+                });
             });
             function getEquipos() {
                 let request = "api/equipos";
                 $.getJSON(url + request, function (data) {
                     let html = "";
                     $.each(data, function (index, equipo) {
-                        console.log(equipo.idEquipo);
                         html += "<li><a class='dropdown-item' href='equipo.html?id=" + equipo.idEquipo + "'>" + equipo.nombre + "</a></li>";
                     });
                     $("#listaequipos").html(html);
+                });
+            }
+
+            function hacerApuestas() {
+                let request = "api/apuestas";
+                $.getJSON(url + request, function (data) {
+                    let html = "";
+
+                    $.each(data, function (index, apuesta) {
+                        html += "<tr>";
+                        html += "<td>" + apuesta.usuario + "</td>";
+                        html += "<td>" + apuesta.resultado + "</td>";
+                        html += "<td>" + apuesta.fecha + "</td>";
+                        html += "</tr>";
+                    });
+                    $("#tablajugadores tbody").html(html);
                 });
             }
         </script>
